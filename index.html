@@ -587,6 +587,147 @@ body {
   }
 }
 
+.order-box {
+    width: 300px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    bottom: 82px; /* 2mm above chatbox */
+    right: 20px;
+    background: white;
+    z-index: 998; /* Below chatbot but above other elements */
+}
+
+.order-box-content {
+    margin-bottom: 10px;
+}
+
+#order-input {
+    width: calc(100% - 50px);
+    padding: 5px;
+}
+
+#place-order {
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #117964;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#place-order:hover {
+    background-color: #699583;
+}
+
+.user-order {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.order-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 80px; /* Shifted to avoid chatbot */
+    width: 50px;
+    height: 50px;
+    background: #DDDDDD00;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.order-icon img {
+    width: 30px;
+    height: 30px;
+}
+
+
+.chatbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 50%; /* To keep the circular shape */
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.chatbot-icon img {
+    width: 50px; /* Adjust size of the image */
+    height: 50px; /* Adjust size of the image */
+    border-radius: 50%; /* Make the image circular if necessary */
+}
+
+/* Default Light Mode */
+.chatbox {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 80px;  /* Position it above the chatbot icon */
+    right: 20px;
+    background-color: white;
+    color: black; /* Text color for light mode */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 999;
+    padding: 10px;
+}
+
+.chatbox-content {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.bot-message, .user-message {
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    max-width: 80%;
+}
+
+.bot-message {
+    background-color: #f1f1f1;
+    align-self: flex-start;
+    border: 1px solid #e0e0e0;
+}
+
+.user-message {
+    background-color: #117964;
+    color: white;
+    align-self: flex-end;
+    border: 1px solid #0056b3;
+}
+
+#user-input {
+    width: 70%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+#send-message {
+    padding: 8px 15px;
+    background-color: #117964;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#send-message:hover {
+    background-color: #699583;
+}
+
 @media (max-width: 500px) {
   html {
     font-size: 65%;
@@ -894,6 +1035,37 @@ Nourish your body and soul with our vibrant Green Goddess Bowl, carefully crafte
         </div>
       </div>
     </section>
+   
+  <!-- Order Icon (Appears as a floating circle) -->
+<div class="order-icon" onclick="toggleOrderBox()">
+    <img src="https://assets.onecompiler.app/436645ybn/437vd6tar/icons8-create-order-90%20(1).png" alt="order Icon">
+</div>
+
+<!-- Order Box (Initially Hidden) -->
+<div id="order-box" class="order-box" style="display: none;">
+    <div id="order-box-content" class="order-box-content">
+        <div class="order-message">Welcome! Place your order below.</div>
+    </div>
+    <input type="text" id="order-input" placeholder="Enter your order here..." onkeydown="if(event.key === 'Enter') placeOrder()">
+    <button id="place-order" onclick="placeOrder()">Order</button>
+</div>
+
+  
+   <!-- Chatbot Icon (Appears as a floating circle) -->
+    <div class="chatbot-icon" onclick="toggleChat()">
+        <img src="https://assets.onecompiler.app/436645ybn/437vd6tar/icons8-chatbot-100%20(1).png" alt="Chatbot Icon">
+    </div>
+
+    <!-- Chatbox -->
+    <div id="chatbox" class="chatbox">
+        <div id="chatbox-content" class="chatbox-content">
+            <div class="bot-message">Hello! How can I assist you today?</div>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message here..." onkeydown="if(event.key === 'Enter') sendMessage()">
+        <button id="send-message" onclick="sendMessage()">Send</button>
+    </div>
+
+   
     <section id="contact">
       <div class="contact-container container">
         <div class="contact-img">
@@ -948,5 +1120,137 @@ Nourish your body and soul with our vibrant Green Goddess Bowl, carefully crafte
         } // End if
       });
     });
+    
+       function placeOrder() {
+        const input = document.getElementById("order-input");
+        const orderBoxContent = document.getElementById("order-box-content");
+        const cartItems = document.getElementById("cart-items");
+        
+        if (input.value.trim() !== "") {
+            // Add order to order box
+            const userOrder = document.createElement("div");
+            userOrder.classList.add("user-order");
+            userOrder.textContent = "You ordered: " + input.value;
+            orderBoxContent.appendChild(userOrder);
+            
+            // Add item to cart
+            const cartItem = document.createElement("li");
+            cartItem.textContent = input.value;
+            cartItems.appendChild(cartItem);
+            
+            input.value = "";
+        }
+    }
+    
+    function toggleOrderBox() {
+        const orderBox = document.getElementById("order-box");
+        orderBox.style.display = orderBox.style.display === "none" ? "block" : "none";
+    }
+      
+      // Toggle chatbox visibility on icon click
+function toggleChat() {
+    const chatbox = document.getElementById('chatbox');
+    // Toggle the display of the chatbox
+    chatbox.style.display = chatbox.style.display === 'none' || chatbox.style.display === '' ? 'block' : 'none';
+}
+
+// Function to handle sending and receiving messages
+function sendMessage() {
+    const userInput = document.getElementById('user-input').value;
+    if (userInput.trim() === "") return; // Do nothing if input is empty
+
+    const chatboxContent = document.getElementById('chatbox-content');
+    
+    // Display user's message
+    const userMessage = document.createElement('div');
+    userMessage.textContent = "You: " + userInput;
+    userMessage.classList.add('user-message'); // Add user message styling
+    chatboxContent.appendChild(userMessage);
+    
+    // Display chatbot's response
+    const chatbotMessage = document.createElement('div');
+    chatbotMessage.textContent = "WebGenie: " + getChatbotResponse(userInput);
+    chatbotMessage.classList.add('bot-message'); // Add bot message styling
+    chatboxContent.appendChild(chatbotMessage);
+
+    // Clear input field
+    document.getElementById('user-input').value = '';
+
+    // Scroll to the bottom of the chat log
+    chatboxContent.scrollTop = chatboxContent.scrollHeight;
+}
+
+// Expanded response function for the chatbot
+function getChatbotResponse(input) {
+    input = input.toLowerCase().trim();
+    
+ if (input.includes("hello") || input.includes("hi")) {
+        return "Hello! How can I assist you today?";
+    } else if (input.includes("what is your favorite dish")) {
+        return "Our signature dish is the Avocado Salad, crafted with fresh avocados, mixed greens, and a hint of Indian spices.";
+    } else if (input.includes("how long has aheli's freshfusion been in business")) {
+        return "Aheli's FreshFusion has been making healthy food for 10 years.";
+    } else if (input.includes("what inspired aheli's freshfusion")) {
+        return "Aheli's FreshFusion was inspired by a passion for traditional Indian cuisine and a desire to make healthy eating accessible to everyone.";
+    } else if (input.includes("what types of food do you offer")) {
+        return "We offer a variety of healthy food options, including salads, bowls, oatmeal, and vegan desserts, all made with fresh ingredients.";
+    } else if (input.includes("what is the price of the sanjeevani bowl")) {
+        return "The Sanjeevani Bowl is priced at ₹ 890.";
+    } else if (input.includes("do you have vegan options")) {
+        return "Yes, we have vegan options like the Berry Bliss cheesecake, made with a cashew and coconut cream base.";
+    } else if (input.includes("what is the price of avocado salad")) {
+        return "The Avocado Salad is priced at ₹ 659.";
+    } else if (input.includes("what is the price of oatmeal with bananas and nuts")) {
+        return "The Oatmeal with bananas and nuts is priced at ₹ 455.";
+    } else if (input.includes("what is the price of mediterranean delight box")) {
+        return "The Mediterranean Delight Box is priced at ₹ 429.";
+    } else if (input.includes("what is the price of berry bliss")) {
+        return "The Berry Bliss is priced at ₹ 589.";
+    } else if (input.includes("what is the price of antioxidant bowl")) {
+        return "The Antioxidant Bowl is priced at ₹ 650.";
+    } else if (input.includes("what are your customer reviews") || input.includes("what customers say")) {
+        return "Our customers love our dishes! For example, Raj Ali said, 'Best Acai Bowl experience ever! Fresh ingredients and friendly staff.' Subhash Verma said, 'I'm hooked on the Berry Bliss Acai Bowl! The combination of fresh berries and coconut flakes is absolute perfection.' Gulshan Singh said, 'Love the Mediterranean Delight Box! Fresh, healthy, and delicious.'";
+    } else if (input.includes("what is the philosophy behind aheli's freshfusion")) {
+        return "Our philosophy is to nourish the body, mind, and soul through wholesome, delicious meals that promote well-being. We believe food is more than just sustenance – it's a way to nourish body, mind, and soul.";
+    } else if (input.includes("what is the story behind the name aheli")) {
+        return "The name Aheli means 'peaceful' in Sanskrit, reflecting our commitment to serving wholesome meals that promote well-being and tranquility.";
+    } else if (input.includes("who are the founders")) {
+        return "Aheli was founded by Raj Ali, driven by a passion for traditional Indian cuisine and a desire to make healthy eating accessible.";
+    } else if (input.includes("what is your story") || input.includes("tell me about aheli")) {
+        return "Aheli was born from a passion for traditional Indian cuisine and a desire to make healthy eating accessible to all. Our founders grew up surrounded by the vibrant flavors and aromas of Indian cooking and recognized the need for a modern, health-conscious approach to traditional recipes.";
+    } else if (input.includes("contact us") || input.includes("how can i contact you")) {
+        return "You can contact us by filling out the form on our website or visiting us at our location."; // Replace with actual contact info if you have it.
+    } else if (input.includes("what fruits do you offer") || input.includes("fruit options")) {
+        return "We offer a variety of fruit-based dishes, including our Avocado Salad, Berry Bliss, and Antioxidant Bowl.";
+    } else if (input.includes("what vegetables do you offer") || input.includes("vegetable options")) {
+        return "We use fresh vegetables in many of our dishes, such as the Avocado Salad and Sanjeevani Bowl.";
+    } else if (input.includes("what grains do you offer") || input.includes("grain options")) {
+        return "We offer oatmeal with bananas and nuts, inspired by traditional Indian breakfasts.";
+    } else if (input.includes("learn more about fruit")) {
+        return "Our fruit dishes are packed with vitamins and antioxidants. They are a great way to enjoy a healthy and delicious meal or snack.";
+    } else if (input.includes("learn more about vegetables")) {
+        return "We believe in using fresh, high-quality vegetables in our dishes to provide essential nutrients and vibrant flavors.";
+    } else if (input.includes("learn more about grains")) {
+        return "Our grain-based dishes, like our oatmeal, provide a good source of energy and fiber.";
+    } else if (input.includes("chatbot")) {
+        return "I am a WebGenie designed to provide information about Aheli's FreshFusion. Ask me anything about our menu, story, or philosophy!";
+    } else if (input.includes("avocado salad nutrition")) {
+        return "Avocado Salad: Calories: 450, Protein: 15g, Carbs: 25g. Price: ₹ 659. Estimated workout: 30 minutes of brisk walking.";
+    } else if (input.includes("oatmeal with bananas and nuts nutrition")) {
+        return "Oatmeal with Bananas and Nuts: Calories: 380, Protein: 12g, Carbs: 60g. Price: ₹ 455. Estimated workout: 20 minutes of jogging.";
+    } else if (input.includes("sanjeevani bowl nutrition")) {
+        return "Sanjeevani Bowl: Calories: 520, Protein: 20g, Carbs: 40g. Price: ₹ 890. Estimated workout: 40 minutes of cycling.";
+    } else if (input.includes("mediterranean delight box nutrition")) {
+        return "Mediterranean Delight Box: Calories: 400, Protein: 18g, Carbs: 30g. Price: ₹ 429. Estimated workout: 25 minutes of swimming.";
+    } else if (input.includes("berry bliss nutrition")) {
+        return "Berry Bliss: Calories: 350, Protein: 8g, Carbs: 50g. Price: ₹ 589. Estimated workout: 15 minutes of HIIT.";
+    } else if (input.includes("antioxidant bowl nutrition")) {
+        return "Antioxidant Bowl: Calories: 480, Protein: 14g, Carbs: 55g. Price: ₹ 650. Estimated workout: 35 minutes of yoga.";
+    } else { // Only one 'else' block
+        return "I'm still learning! I don't have an answer for that yet. Try asking something else about Aheli's FreshFusion.";
+    }
+}
+
+    
   </script>
 </html>
